@@ -1,0 +1,397 @@
+{
+  "info": {
+    "_postman_id": "55cf9866-2b2a-409b-a618-d190b7d462a5",
+    "name": "django",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58667663",
+    "_collection_link": "https://go.postman.co/collection/58667663-55cf9866-2b2a-409b-a618-d190b7d462a5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "api root",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200 OK\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.response.to.be.json;\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}",
+          "host": [
+            "{{base_url}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create snippet",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Snippet created (201)\", function () {\r\n    pm.response.to.have.status(201);\r\n    pm.response.to.be.json;\r\n});\r\n\r\nvar jsonData = pm.response.json();\r\npm.environment.set(\"snippet_id\", jsonData.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Hello Python\",\r\n    \"code\": \"print('Hello, DRF!')\",\r\n    \"linenos\": true,\r\n    \"language\": \"python\",\r\n    \"style\": \"friendly\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}snippets/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "snippets List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Snippets list returned with pagination\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.json().results).to.be.an(\"array\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}snippets/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "snippet detail",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Snippet detail matches snippet_id\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.json().id).to.equal(pm.environment.get(\"snippet_id\"));\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}snippets/{{snippet_id}}/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            "{{snippet_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update snippet",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Snippet updated (200)\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.json().title).to.equal(\"Updated Python Snippet\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Updated Python Snippet\",\r\n    \"code\": \"def greet():\\n    return 'Updated!'\",\r\n    \"linenos\": true,\r\n    \"language\": \"python\",\r\n    \"style\": \"monokai\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}snippets/{{snippet_id}}/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            "{{snippet_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "snippet Highlight",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTML highlight returned\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.text()).to.include(\"<!DOCTYPE html\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Updated Python Snippet\",\r\n    \"code\": \"def greet():\\n    return 'Updated!'\",\r\n    \"linenos\": true,\r\n    \"language\": \"python\",\r\n    \"style\": \"monokai\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}snippets/{{snippet_id}}/highlight/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            "{{snippet_id}}",
+            "highlight",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Unauthorized Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Unauthorized creation forbidden (403)\", function () {\r\n    pm.response.to.have.status(403);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"Guest Snippet\",\r\n    \"code\": \"print(123)\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}snippets/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Snippets List",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTML Browsable API returned (200)\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.text()).to.include(\"Django REST framework\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}snippets/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Snippets Suffix",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Format suffix .json works (200)\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.response.to.be.json;\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}snippets.json",
+          "host": [
+            "{{base_url}}snippets",
+            "json"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Non-existent snippet returns 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}snippets/777/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            "777",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete snippet",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Snippet deleted (204 No Content)\", function () {\r\n    pm.response.to.have.status(204);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}snippets/{{snippet_id}}/",
+          "host": [
+            "{{base_url}}snippets"
+          ],
+          "path": [
+            "{{snippet_id}}",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "david",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "david",
+        "type": "string"
+      }
+    ]
+  }
+}
